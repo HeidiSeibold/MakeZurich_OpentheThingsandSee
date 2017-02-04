@@ -1,0 +1,29 @@
+---
+title: "MakeZurich"
+author: "Heidi and Oleg"
+date: "February 4, 2017"
+output: html_document
+---
+
+```{r}
+library("ggplot2")
+library("plyr")
+
+## read data
+dat <- read.csv("allthethings1.csv")
+
+## normalize the measurements per project
+dat$value <- as.numeric(as.character(dat$value))
+dat$value_normalized <- ddply(dat, .variables = .(device_id), 
+                              .fun = function(x) scale(x$value))[, 2]
+
+
+## time
+dat$t <- as.POSIXlt(strptime(dat$time, "%FT%T"))
+
+## plot
+ggplot(dat, aes(x = t, y = value_normalized, color = device_id)) + 
+  geom_point() +
+  geom_line() 
+```
+
